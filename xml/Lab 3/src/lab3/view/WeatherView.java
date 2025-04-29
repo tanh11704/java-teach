@@ -1,9 +1,12 @@
 package lab3.view;
 
+import java.awt.Color;
+import java.awt.Image;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import lab3.model.WeatherModel;
@@ -23,7 +26,7 @@ public class WeatherView extends javax.swing.JFrame {
         cityLabel.setText(model.getCityName());
         timeLabel.setText("Cập nhật: " + model.getLastUpdate());
         tempLabel.setText(model.getTemperature() + "°C");
-        descLabel.setText(model.getWeatherCondition());
+        descLabel.setText(convertToTitleCaseIteratingChars(model.getWeatherCondition()));
         feelsLikeLabel.setText("Cảm giác như: " + model.getFeelLike() + "°C");
         humidityLabel.setText("Độ ẩm: " + model.getHumidity());
         pressureLabel.setText("Áp suất: " + model.getPressure());
@@ -37,13 +40,71 @@ public class WeatherView extends javax.swing.JFrame {
             try {
                 URL iconUrl = new URL("http://openweathermap.org/img/w/" + iconCode + ".png");
                 ImageIcon icon = new ImageIcon(iconUrl);
-                weatherIcon.setIcon(icon);
+                
+                Image image = icon.getImage();
+                Image scaledImage = image.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                ImageIcon scaledIcon = new ImageIcon(scaledImage);
+        
+                weatherIcon.setIcon(scaledIcon);
             } catch (Exception e) {
                 weatherIcon.setIcon(null);
             }
         }
+        
+        customizeWeatherDisplay(tempLabel, iconCode);
+    }
+    
+    public void customizeWeatherDisplay(JLabel temperatureLabel, String iconCode) {
+        Color tempColor = Color.BLACK;
+
+        if (iconCode != null && !iconCode.isEmpty()) {
+            if (iconCode.startsWith("01")) {
+                tempColor = new Color(255, 98, 0);
+            }
+            
+            else if (iconCode.startsWith("09") || iconCode.startsWith("10")) {
+                tempColor = new Color(70, 130, 180);
+            }
+            
+            else if (iconCode.startsWith("13")) {
+                tempColor = new Color(135, 206, 235);
+            }
+            
+            else if (iconCode.startsWith("03") || iconCode.startsWith("04")) {
+                tempColor = new Color(128, 128, 128);
+            }
+            
+            else if (iconCode.startsWith("50")) {
+                tempColor = new Color(211, 211, 211);
+            }
+        }
+
+        temperatureLabel.setForeground(tempColor);
     }
 
+    public String convertToTitleCaseIteratingChars(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+
+        StringBuilder converted = new StringBuilder();
+
+        boolean convertNext = true;
+        for (char ch : text.toCharArray()) {
+            if (Character.isSpaceChar(ch)) {
+                convertNext = true;
+            } else if (convertNext) {
+                ch = Character.toTitleCase(ch);
+                convertNext = false;
+            } else {
+                ch = Character.toLowerCase(ch);
+            }
+            converted.append(ch);
+        }
+
+        return converted.toString();
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -75,16 +136,16 @@ public class WeatherView extends javax.swing.JFrame {
         mainPanel.setLayout(new java.awt.BorderLayout(10, 10));
 
         headerPanel.setOpaque(false);
-        headerPanel.setLayout(new java.awt.BorderLayout());
+        headerPanel.setLayout(new java.awt.BorderLayout(0, 10));
 
         cityLabel.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        cityLabel.setForeground(new java.awt.Color(255, 255, 255));
+        cityLabel.setForeground(new java.awt.Color(107, 78, 170));
         cityLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         cityLabel.setText("Đà Nẵng, VN");
         headerPanel.add(cityLabel, java.awt.BorderLayout.NORTH);
 
         timeLabel.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        timeLabel.setForeground(new java.awt.Color(255, 255, 255));
+        timeLabel.setForeground(new java.awt.Color(122, 122, 122));
         timeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         timeLabel.setText("Cập nhật:");
         headerPanel.add(timeLabel, java.awt.BorderLayout.SOUTH);
@@ -104,7 +165,7 @@ public class WeatherView extends javax.swing.JFrame {
         centerPanel.add(weatherIcon, gridBagConstraints);
 
         tempLabel.setFont(new java.awt.Font("Arial", 1, 48)); // NOI18N
-        tempLabel.setForeground(new java.awt.Color(255, 255, 255));
+        tempLabel.setForeground(new java.awt.Color(255, 98, 0));
         tempLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         tempLabel.setText("24°C");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -114,7 +175,7 @@ public class WeatherView extends javax.swing.JFrame {
         centerPanel.add(tempLabel, gridBagConstraints);
 
         descLabel.setFont(new java.awt.Font("Arial", 2, 18)); // NOI18N
-        descLabel.setForeground(new java.awt.Color(255, 255, 255));
+        descLabel.setForeground(new java.awt.Color(74, 144, 226));
         descLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         descLabel.setText("Mây cụm");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -124,7 +185,7 @@ public class WeatherView extends javax.swing.JFrame {
         centerPanel.add(descLabel, gridBagConstraints);
 
         feelsLikeLabel.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
-        feelsLikeLabel.setForeground(new java.awt.Color(255, 255, 255));
+        feelsLikeLabel.setForeground(new java.awt.Color(74, 144, 226));
         feelsLikeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         feelsLikeLabel.setText("Cảm giác như: 24.4°C");
         gridBagConstraints = new java.awt.GridBagConstraints();

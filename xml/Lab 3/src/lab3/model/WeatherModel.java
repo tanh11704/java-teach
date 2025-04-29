@@ -43,6 +43,7 @@ public class WeatherModel {
         
         while ((line = reader.readLine()) != null) {
             xmlBuilder.append(line).append("\n");
+//              url = url + "\n" + line;
         }
         reader.close();
         
@@ -150,7 +151,7 @@ public class WeatherModel {
         this.cloud = clouds.getAttribute("value");
         
         try {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd'T'HH:mm:ss");
             SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
             Date updateDate = inputFormat.parse(updateValue);
             this.lastUpdate = outputFormat.format(updateDate);
