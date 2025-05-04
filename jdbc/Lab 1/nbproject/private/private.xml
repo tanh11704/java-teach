@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/Users/tanh11704/Desktop/VKU/java/jdbc/Lab%201/src/lab/jdbc/model/Student.java</file>
+            <file>file:/Users/tanh11704/Desktop/VKU/java/jdbc/Lab%201/src/lab/jdbc/model/Department.java</file>
+            <file>file:/Users/tanh11704/Desktop/VKU/java/jdbc/Lab%201/src/lab/jdbc/dao/StudentDAO.java</file>
+            <file>file:/Users/tanh11704/Desktop/VKU/java/jdbc/Lab%201/src/lab/jdbc/dao/DatabaseConnection.java</file>
+            <file>file:/Users/tanh11704/Desktop/VKU/java/jdbc/Lab%201/src/lab/jdbc/dao/DepartmentDAO.java</file>
+            <file>file:/Users/tanh11704/Desktop/VKU/java/jdbc/Lab%201/src/lab/jdbc/ui/StudentManagementFrame.java</file>
+        </group>
+    </open-files>
+</project-private>
