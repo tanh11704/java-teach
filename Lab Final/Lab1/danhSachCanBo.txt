@@ -1,3 +1,0 @@
-KySu|Trần Phước Anh|20|Nam|Đà Nẵng|CNTT
-CongNhan|Hiền Thục|19|Nữ|Đà Nẵng|10
-KySu|Trần Phước|20|Nam|QN|Backend
