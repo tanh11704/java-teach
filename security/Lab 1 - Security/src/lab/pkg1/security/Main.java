@@ -28,6 +28,11 @@ import swing.ContactListCellRenderer;
 import swing.RoundedBorder;
 import utils.Constants;
 import java.awt.CardLayout;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class Main extends javax.swing.JFrame {
     
@@ -78,6 +83,15 @@ public class Main extends javax.swing.JFrame {
         teamMessages.add(new Message("I agree with Carol", "You", true, "Yesterday"));
         teamMessages.add(new Message("Let's schedule a meeting tomorrow", "Emma Davis", false, "Today"));
         conversations.put("Team Project", teamMessages);
+    }
+    
+    private void showLoginDialog() {
+        loginDialog = new LoginDialog(this, client);
+        loginDialog.setVisible(true);
+        
+        if (!loginDialog.isLoginSuccess()) {
+            System.exit(0);
+        }
     }
     
     @SuppressWarnings("unchecked")
@@ -506,7 +520,7 @@ public class Main extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_groupsListValueChanged
 
-    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
+    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String messageText = messageField.getText().trim();
         if (!messageText.isEmpty()) {
             String selectedContact = contactsList.getSelectedValue();
@@ -514,26 +528,18 @@ public class Main extends javax.swing.JFrame {
             String currentConversation = selectedContact != null ? selectedContact : selectedGroup;
 
             if (currentConversation != null) {
-                // Get current time
-                SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
-                String currentTime = timeFormat.format(new Date());
-
-                // Create and add new message
-                Message newMessage = new Message(messageText, "You", true, currentTime);
-                if (!conversations.containsKey(currentConversation)) {
-                    conversations.put(currentConversation, new ArrayList<>());
+                if (selectedContact != null) {
+                    client.sendChatMessage(messageText, selectedContact);
+                } else {
+                    client.sendGroupMessage(messageText, selectedGroup);
                 }
-                conversations.get(currentConversation).add(newMessage);
-
-                // Display updated messages
-                displayMessages(currentConversation);
-
+                
                 // Clear message field
                 messageField.setText("");
             }
         }
-    }//GEN-LAST:event_sendButtonActionPerformed
-
+    }
+    
     private void messageFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_messageFieldActionPerformed
         String messageText = messageField.getText().trim();
         if (!messageText.isEmpty()) {
@@ -735,4 +741,85 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel welcomePanel;
     // End of variables declaration//GEN-END:variables
 
+    public void displayMessage(Message message) {
+        String conversation = message.getRecipient();
+        if (!conversations.containsKey(conversation)) {
+            conversations.put(conversation, new ArrayList<>());
+        }
+        conversations.get(conversation).add(message);
+        
+        // Update UI if this is the current conversation
+        String selectedContact = contactsList.getSelectedValue();
+        String selectedGroup = groupsList.getSelectedValue();
+        String currentConversation = selectedContact != null ? selectedContact : selectedGroup;
+        
+        if (conversation.equals(currentConversation)) {
+            displayMessages(conversation);
+        }
+    }
+    
+    public void handleFileMessage(Message message) {
+        // Handle incoming file
+        String fileName = message.getFileName();
+        byte[] fileData = message.getFileData();
+        
+        // Show file save dialog
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setSelectedFile(new File(fileName));
+        
+        if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            try (FileOutputStream fos = new FileOutputStream(selectedFile)) {
+                fos.write(fileData);
+                JOptionPane.showMessageDialog(this,
+                    "File saved successfully",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this,
+                    "Error saving file: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
+    public void onLoginSuccess() {
+        loginDialog.onLoginSuccess();
+    }
+    
+    public void onLoginFailed() {
+        loginDialog.onLoginFailed();
+    }
+    
+    public void onRegisterSuccess() {
+        loginDialog.onRegisterSuccess();
+    }
+    
+    public void onRegisterFailed() {
+        loginDialog.onRegisterFailed();
+    }
+    
+    public void onGroupCreated(String groupName) {
+        groupsModel.addElement(groupName);
+        JOptionPane.showMessageDialog(this,
+            "Group created successfully",
+            "Success",
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    public void onJoinedGroup(String groupName) {
+        JOptionPane.showMessageDialog(this,
+            "Joined group: " + groupName,
+            "Success",
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    public void onDisconnected() {
+        JOptionPane.showMessageDialog(this,
+            "Disconnected from server",
+            "Connection Lost",
+            JOptionPane.ERROR_MESSAGE);
+        System.exit(1);
+    }
 }
